@@ -28,7 +28,7 @@ impl Default for Person {
 // Person::from("Mark,20")` to compile Please note that you'll need to parse the
 // age component into a `usize` with something like `"4".parse::<usize>()`. The
 // outcome of this needs to be handled appropriately.
-//
+
 // Steps:
 // 1. If the length of the provided string is 0, then return the default of
 //    Person.
@@ -40,12 +40,35 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
-    }
+        if s.len() == 0{
+            // 长度为0 = 默认
+            Person::default()
+        }else{
+            let res:Vec<&str> = s.split(',').collect();
+            // 切割字符串
+            if res.len()!= 2{
+                // 长度不是2的必定有问题 = 默认
+                Person::default()
+            }else if res[0]== ""{
+                // 第一个是空字符串的无名氏 = 默认
+                Person::default()
+            }else {
+                // 第二个元素不管是空，还是其他形式，parse失败的都是默认
+                match res[1].parse(){
+                    Ok(val)=>Person{
+                        name:res[0].to_string(),
+                        age:val,},
+                    Err(_)=>Person::default(),}
+            }
+        }
+            
+     }
+        
 }
+
 
 fn main() {
     // Use the `from` function
