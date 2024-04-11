@@ -36,7 +36,7 @@
 
 
 fn main() {}
-
+#[allow(unused_imports)]
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -52,3 +52,4 @@ mod tests {
         assert!(timestamp >= e && timestamp < e + 10);
     }
 }
+

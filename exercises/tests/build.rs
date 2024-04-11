@@ -11,8 +11,7 @@ fn main() {
         .unwrap()
         .as_secs(); // What's the use of this timestamp here?
     let your_command = format!(
-        // cargo:rustc-env=VAR=VALUE — 设置一个环境变量。
-        "rust-env=TEST_FOO={}",
+        "rustc-env=TEST_FOO={}",
         timestamp
     );
     println!("cargo:{}", your_command);
@@ -20,8 +19,9 @@ fn main() {
     // In tests8, we should enable "pass" feature to make the
     // testcase return early. Fill in the command to tell
     // Cargo about that.
-    // cargo:rustc-cfg=KEY[="VALUE"] — 启用编译时的 cfg 设置
-    let your_command = format!("rustc-cfg=feature=\"pass\"");
-    // 使用反转义符号
+    let your_command = "rustc-cfg=feature=\"pass\"";
     println!("cargo:{}", your_command);
 }
+// cargo:rustc-env=VAR=VALUE — 设置一个环境变量。
+// cargo:rustc-cfg=KEY[="VALUE"] — 启用编译时的 cfg 设置
+// 使用反转义符号

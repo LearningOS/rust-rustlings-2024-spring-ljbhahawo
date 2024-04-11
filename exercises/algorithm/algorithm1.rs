@@ -2,7 +2,7 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
+
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -29,13 +29,14 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: std::cmp::PartialOrd+Clone> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+
+impl<T: std::cmp::PartialOrd+Clone> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -44,16 +45,19 @@ impl<T> LinkedList<T> {
         }
     }
 
-    pub fn add(&mut self, obj: T) {
+    pub fn add(&mut self, obj: T) -> Option<NonNull<Node<T>>>{
         let mut node = Box::new(Node::new(obj));
         node.next = None;
-        let node_ptr = Some(unsafe { NonNull::new_unchecked(Box::into_raw(node)) });
+        let node_ptr = Some(unsafe { 
+            NonNull::new_unchecked(Box::into_raw(node)) 
+        });
         match self.end {
             None => self.start = node_ptr,
             Some(end_ptr) => unsafe { (*end_ptr.as_ptr()).next = node_ptr },
         }
         self.end = node_ptr;
         self.length += 1;
+        node_ptr
     }
 
     pub fn get(&mut self, index: i32) -> Option<&T> {
@@ -71,13 +75,66 @@ impl<T> LinkedList<T> {
     }
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+        // 将两个链表合成一个新的链表，升序排序
+		let mut merge_list = LinkedList::new();
+        // 如果其中一个链表为空，返回另一个链表
+        if list_a.start == None{
+            return list_b;
         }
+        if list_b.start == None {
+             return list_a;
+        }
+
+        unsafe{
+            // 获取两个链表的第一个元素的可变所有权
+            let mut a_ptr1 = list_a.start.unwrap();
+            let mut a_len:u32 = 0;
+            let mut b_ptr1 = list_b.start.unwrap();
+            let mut b_len:u32 = 0;
+            
+            while merge_list.length < (list_a.length+list_b.length) 
+            && a_len < list_a.length && b_len<list_b.length{
+                // 对NotNull使用asref，返回了node的引用
+                if a_ptr1.as_ref().val <= b_ptr1.as_ref().val{
+                    merge_list.add(a_ptr1.as_ref().val.clone());
+                    a_len+=1;
+                    if a_len == list_a.length{
+                        break;
+                    }
+                    a_ptr1 = a_ptr1.as_ref().next.unwrap();
+                }else {
+                    merge_list.add(b_ptr1.as_ref().val.clone());
+                    b_len+=1;
+                    if b_len == list_b.length{
+                        break;
+                    }
+                    b_ptr1 = b_ptr1.as_ref().next.unwrap();
+                }
+                    
+            }
+
+            while a_len < list_a.length{
+                merge_list.add(a_ptr1.as_ref().val.clone());
+                a_len+=1;
+                if a_len == list_a.length{
+                    break;
+                }
+                a_ptr1 = a_ptr1.as_ref().next.unwrap();
+            }
+            while b_len < list_b.length{
+                merge_list.add(b_ptr1.as_ref().val.clone());
+                b_len+=1;
+                if b_len == list_b.length{
+                    break;
+                }
+                b_ptr1 = b_ptr1.as_ref().next.unwrap();
+            }
+        }
+
+        merge_list
 	}
+
+
 }
 
 impl<T> Display for LinkedList<T>
