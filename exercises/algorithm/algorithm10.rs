@@ -59,9 +59,11 @@ pub trait Graph {
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         // 使用模式匹配取出起点，终点，权值
         let (src,dst,val) = edge;
+        // 添加边之前，先添加结点
         self.add_node(src);
         self.add_node(dst);
         
+        // 取出self的可变引用，获取hashmap的相应键值对的可变引用
         if let Some(edg1) = self.adjacency_table_mutable().get_mut(src){
             edg1.push((dst.to_string(),val));
         }

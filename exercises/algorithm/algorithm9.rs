@@ -25,6 +25,7 @@ where
             count: 0,
             items: vec![T::default()],
             comparator,
+            // comparator用于判断两个元素的大小，用去分别构造大根堆小根堆
         }
     }
 
