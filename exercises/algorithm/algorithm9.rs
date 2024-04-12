@@ -2,7 +2,7 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
+
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -37,14 +37,15 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        self.count += 1;
+        self.count+=1;
         self.items.push(value);
-
-        let mut idx = self.count;
-
-        while idx > 1 && (self.comparator)(&self.items[idx], &self.items[self.parent_idx(idx)]) {
-            self.items.swap(idx, self.parent_idx(idx));
-            idx = self.parent_idx(idx);
+        let mut count = self.len();
+        // 使用comparator来确定大根堆还是小根堆
+        // 只有堆内的元素数量大于0时需要排序
+        while count > 1 && (self.comparator)(&self.items[count],&self.items[self.parent_idx(count)]) 
+        {
+            self.items.swap(count,count/2);
+            count = self.parent_idx(count);
         }
     }
 
@@ -65,9 +66,9 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        if self.right_child_idx(idx) > self.count || (self.comparator)(&self.items[self.left_child_idx(idx)], &self.items[self.right_child_idx(idx)]) {
+        if self.right_child_idx(idx) > self.len() || (self.comparator)(&self.items[self.left_child_idx(idx)], &self.items[self.right_child_idx(idx)]) {
             self.left_child_idx(idx)
-        } else {
+        }else {
             self.right_child_idx(idx)
         }
     }
@@ -95,9 +96,9 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        if self.is_empty() {
+        if self.is_empty(){
             None
-        } else {
+        }else {
             let min = self.items.swap_remove(1);
             self.count -= 1;
 
@@ -114,6 +115,7 @@ where
             }
             Some(min)
         }
+		
     }
 }
 
