@@ -3,12 +3,12 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
 
 #[derive(Debug)]
+#[derive(PartialEq)]
 struct TreeNode<T>
 where
     T: Ord,
@@ -51,12 +51,25 @@ where
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
         //TODO
+        // 对self.root进行模式匹配
+        // root是一个option，如果为none，则new一个返回
+        // 如果是some，取得其中node的可变引用，然后调用node的insert进行插入
+        match self.root{
+            None=>self.root = Some(Box::new(TreeNode::new(value))),
+            Some(ref mut node) => node.insert(value),
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
         //TODO
-        true
+        // 对self.root进行模式匹配
+        // root是一个option，如果为none，则说明值不存在
+        // 如果是some，取得其中node的可变引用，然后调用node的search进行查找
+        match self.root{
+            None=>false,
+            Some(ref node) => node.search(value),
+        }
     }
 }
 
@@ -67,6 +80,36 @@ where
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
         //TODO
+        // 如果值相等，则什么都不用做
+        // 如果结点上的val 小于 插入的val，说明要插在右子树，如果右子树为空则直接插入，否则递归插入
+        // 如果结点上的val 大于 插入的val，说明要插在左子树，如果左子树为空则直接插入，否则递归插入
+        if self.value < value{
+            match self.right {
+                None => self.right = Some(Box::new(TreeNode::new(value))),
+                Some(ref mut node) => node.insert(value),
+            }
+        }else if self.value > value {
+            match self.left {
+                None => self.left = Some(Box::new(TreeNode::new(value))),
+                Some(ref mut node) => node.insert(value),
+            }
+        }
+    }
+
+    fn search(&self,value: T)->bool{
+        if self.value == value{
+            true
+        }else if self.value > value {
+            match self.left {
+                None => false,
+                Some(ref node) => node.search(value),
+            }
+        }else {
+            match self.right {
+                None => false,
+                Some(ref node) => node.search(value),
+            }
+        }
     }
 }
 
