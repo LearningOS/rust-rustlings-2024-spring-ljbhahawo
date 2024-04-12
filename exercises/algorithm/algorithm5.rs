@@ -24,6 +24,7 @@ impl Graph {
         self.adj[dest].push(src); 
     }
 
+    // 默认传进来的是连通图
     // Perform a breadth-first search on the graph, return the order of visited nodes
     fn bfs_with_return(&self, start: usize) -> Vec<usize> {
         let mut visit_order = vec![];
