@@ -2,7 +2,7 @@
 	queue
 	This question requires you to use queues to implement the functionality of the stac
 */
-// I AM NOT DONE
+
 
 #[derive(Debug)]
 pub struct Queue<T> {
@@ -52,30 +52,56 @@ impl<T> Default for Queue<T> {
     }
 }
 
-pub struct myStack<T>
+pub struct MyStack<T>
 {
-	//TODO
+	// true为q1，false为q2
+    
+    main_queue:bool,
 	q1:Queue<T>,
 	q2:Queue<T>
 }
-impl<T> myStack<T> {
+impl<T> MyStack<T> {
     pub fn new() -> Self {
         Self {
-			//TODO
+            // 默认主队列为q1            
+            main_queue:true,
 			q1:Queue::<T>::new(),
 			q2:Queue::<T>::new()
+            
         }
     }
     pub fn push(&mut self, elem: T) {
         //TODO
+        if self.main_queue {
+            self.q1.enqueue(elem);
+        }else {
+            self.q2.enqueue(elem)
+        }
     }
     pub fn pop(&mut self) -> Result<T, &str> {
-        //TODO
-		Err("Stack is empty")
+        // pop的时候，将目前的主队列的最后一个元素前的所有元素，放入另一个队列
+        if self.q1.is_empty() && self.q2.is_empty(){
+            Err("Stack is empty")
+        }else {
+            if self.main_queue{
+                while self.q1.size() >1{
+                    self.q2.enqueue(self.q1.dequeue().unwrap());
+                }
+                self.main_queue = false;
+                self.q1.dequeue()
+            }else {
+                while self.q2.size() >1{
+                    self.q1.enqueue(self.q2.dequeue().unwrap());
+                }
+                self.main_queue = true;
+                self.q2.dequeue()
+            }
+        }
+		
     }
     pub fn is_empty(&self) -> bool {
-		//TODO
-        true
+		self.q1.is_empty() && self.q2.is_empty()
+        
     }
 }
 
@@ -85,7 +111,7 @@ mod tests {
 	
 	#[test]
 	fn test_queue(){
-		let mut s = myStack::<i32>::new();
+		let mut s = MyStack::<i32>::new();
 		assert_eq!(s.pop(), Err("Stack is empty"));
         s.push(1);
         s.push(2);
