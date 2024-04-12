@@ -3,7 +3,7 @@
 	This question requires you to use a stack to achieve a bracket match
 */
 
-// I AM NOT DONE
+use std::ops::Deref;
 #[derive(Debug)]
 struct Stack<T> {
 	size: usize,
@@ -32,7 +32,14 @@ impl<T> Stack<T> {
 	}
 	fn pop(&mut self) -> Option<T> {
 		// TODO
-		None
+		if self.is_empty(){
+			None
+		}else {
+			// vec的pop可以直接返回最后一个元素
+			self.size-=1;
+			self.data.pop()
+		}		
+		
 	}
 	fn peek(&self) -> Option<&T> {
 		if 0 == self.size {
@@ -101,9 +108,63 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 
 fn bracket_match(bracket: &str) -> bool
 {
-	//TODO
-	true
+	if bracket.len() < 1{
+		true
+	}else {
+		let mut stack_bra:Stack<char> = Stack::new();
+		let mut s:Vec<char> = bracket.chars().collect();
+		
+		stack_bra.push(s[0]);
+		let mut count = 1;
+		let leng = s.len();
+		// 当下一个括号是左括号，入栈
+		// 当下一个括号是右括号，将栈顶弹出进行对比，如果对得上就下一个，对不上就false
+		// 如果还有其他特殊情况，一律为false
+		
+		while !stack_bra.is_empty() && count < leng {
+			
+			match s[count] {
+				
+				left if left == '(' || left == '[' || left == '{' =>{
+					stack_bra.push(left);
+				},
+				right1 if right1 == ')' => {
+					if stack_bra.pop().unwrap() != '('{
+						return false;
+					}
+				},
+				right2 if right2 == ']' => {
+					if stack_bra.pop().unwrap() != '['{
+						return false;
+					}
+				},
+				right3 if right3 == '}' => {
+					if stack_bra.pop().unwrap() != '{'{
+						return false;
+					}
+				},
+				_ => {},
+			}
+			count+=1;
+			// 如果因为匹配弹出了一个左括号而导致栈空，压入一个左括号
+			if stack_bra.is_empty() && count < leng{
+				match s[count] {
+					left if left == '(' || left == '[' || left == '{' =>{
+						stack_bra.push(left);
+						count+=1;
+					},
+					_=> return false,
+				}
+			}
+		}
+		true
+	}
+	
 }
+
+
+
+
 
 #[cfg(test)]
 mod tests {
