@@ -3,8 +3,7 @@
 	This problem requires you to implement a basic BFS algorithm
 */
 
-//I AM NOT DONE
-use std::collections::VecDeque;
+use std::collections::{HashMap, HashSet, VecDeque};
 
 // Define a graph
 struct Graph {
@@ -18,7 +17,7 @@ impl Graph {
             adj: vec![vec![]; n],
         }
     }
-
+    // 无向邻接表
     // Add an edge to the graph
     fn add_edge(&mut self, src: usize, dest: usize) {
         self.adj[src].push(dest); 
@@ -27,10 +26,28 @@ impl Graph {
 
     // Perform a breadth-first search on the graph, return the order of visited nodes
     fn bfs_with_return(&self, start: usize) -> Vec<usize> {
-        
-		//TODO
-
         let mut visit_order = vec![];
+        let mut record = HashSet::new();
+		let mut deque = VecDeque::new();
+        record.insert(start);
+        deque.push_back(start);
+        // 第一个元素入列，标记为已访问
+        // 当队列不为空时，循环bfs
+        while deque.len() != 0{
+            // 出列队头元素，取出其vec内所有邻边但没有访问过的元素，并且入列
+            if let Some(val) = deque.pop_front(){
+                visit_order.push(val);
+                for iter in &self.adj[val]{
+                    if !record.contains(&iter){
+                        record.insert(*iter);
+                        deque.push_back(*iter);
+                    }
+                }
+            }
+        }
+        
+
+        
         visit_order
     }
 }
